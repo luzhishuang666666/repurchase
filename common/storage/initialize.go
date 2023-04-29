@@ -19,6 +19,11 @@ import (
 func Setup() {
 	//4. 设置缓存
 	cacheAdapter, err := config.CacheConfig.Setup()
+	RedisErr := cacheAdapter.Set("Ping", "PongPong", 3600)
+	if RedisErr != nil {
+		log.Fatalf("cache setup error, %s\n", err.Error())
+		return
+	}
 	if err != nil {
 		log.Fatalf("cache setup error, %s\n", err.Error())
 	}
