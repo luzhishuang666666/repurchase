@@ -8,6 +8,7 @@
 package storage
 
 import (
+	"github.com/go-admin-team/go-admin-core/storage"
 	"log"
 
 	"github.com/go-admin-team/go-admin-core/sdk"
@@ -15,21 +16,25 @@ import (
 	"github.com/go-admin-team/go-admin-core/sdk/pkg/captcha"
 )
 
+var CacheAdapter storage.AdapterCache
+var Err error
+
 // Setup 配置storage组件
 func Setup() {
 	//4. 设置缓存
-	cacheAdapter, err := config.CacheConfig.Setup()
-	RedisErr := cacheAdapter.Set("Ping", "PongPong", 3600)
+
+	CacheAdapter, Err = config.CacheConfig.Setup()
+	RedisErr := CacheAdapter.Set("Ping", "PongPong", 3600)
 	if RedisErr != nil {
-		log.Fatalf("cache setup error, %s\n", err.Error())
+		log.Fatalf("cache setup error, %s\n", Err.Error())
 		return
 	}
-	if err != nil {
-		log.Fatalf("cache setup error, %s\n", err.Error())
+	if Err != nil {
+		log.Fatalf("cache setup error, %s\n", Err.Error())
 	}
-	sdk.Runtime.SetCacheAdapter(cacheAdapter)
+	sdk.Runtime.SetCacheAdapter(CacheAdapter)
 	//5. 设置验证码store
-	captcha.SetStore(captcha.NewCacheStore(cacheAdapter, 600))
+	captcha.SetStore(captcha.NewCacheStore(CacheAdapter, 600))
 
 	//6. 设置队列
 	if !config.QueueConfig.Empty() {
