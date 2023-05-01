@@ -1,8 +1,6 @@
 package dto
 
 import (
-	_ "time"
-
 	"go-admin/app/admin/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
@@ -10,6 +8,8 @@ import (
 
 type CategoryGetPageReq struct {
 	dto.Pagination `search:"-"`
+	CategoryName   string `form:"categoryName"  search:"type:contains;column:category_name;table:category" comment:"品类名称"`
+	CategoryRemark string `form:"categoryRemark"  search:"type:contains;column:category_remark;table:category" comment:"品类备注"`
 	CategoryOrder
 }
 

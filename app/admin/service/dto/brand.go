@@ -10,6 +10,8 @@ import (
 
 type BrandGetPageReq struct {
 	dto.Pagination `search:"-"`
+	BrandName      string `form:"brandName"  search:"type:contains;column:brand_name;table:brand" comment:"品牌名称"`
+	BrandRemark    string `form:"brandRemark"  search:"type:contains;column:brand_remark;table:brand" comment:"品牌备注"`
 	BrandOrder
 }
 
