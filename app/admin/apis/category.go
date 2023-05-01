@@ -22,6 +22,8 @@ type Category struct {
 // @Summary 获取品类列表
 // @Description 获取品类列表
 // @Tags 品类
+// @Param categoryName query string false "品类名称"
+// @Param categoryRemark query string false "品类备注"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Success 200 {object} response.Response{data=response.Page{list=[]models.Category}} "{"code": 200, "data": [...]}"
