@@ -114,6 +114,9 @@ func (e Commodity) Insert(c *gin.Context) {
 		return
 	}
 	// 设置创建人
+	if len(req.Avatar) == 0 {
+		req.Avatar = "/static/uploadfile/NoImage.jpg"
+	}
 	req.SetCreateBy(user.GetUserId(c))
 
 	err = s.Insert(&req)
