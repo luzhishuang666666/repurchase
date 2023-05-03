@@ -1,8 +1,10 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	log "github.com/go-admin-team/go-admin-core/logger"
+	"reflect"
 
 	"github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
@@ -15,6 +17,12 @@ import (
 
 type Application struct {
 	service.Service
+}
+
+var ApplicationType = map[string]string{
+	"0": "brand",
+	"1": "category",
+	"2": "commodity",
 }
 
 // GetPage 获取Application列表
@@ -122,6 +130,32 @@ func (e *Application) Approval(d *dto.ApplicationApprovalReq) error {
 		data.SetStatus("2")
 	} else {
 		data.SetStatus("1")
+
+		classType := ApplicationType[data.Type]
+
+		structType := reflect.TypeOf(map[string]interface{}{
+			"brand":     Brand{},
+			"category":  Category{},
+			"commodity": Commodity{},
+		}[classType])
+
+		if structType == nil {
+			e.Log.Errorf("unknown class")
+		}
+		structPtr := reflect.New(structType)
+		err = json.Unmarshal([]byte(data.ApplicationJson), structPtr.Interface())
+		if err != nil {
+			e.Log.Errorf("failed to unmarshal JSON: %s", err)
+			return err
+		}
+
+		log.Info("structPtr: ", structPtr)
+
+		ptrDb := e.Orm.Save(&structPtr)
+		if err = ptrDb.Error; err != nil {
+			e.Log.Errorf("structPtr Save error:%s \r\n", err)
+			return err
+		}
 	}
 
 	log.Info("data :", data)
