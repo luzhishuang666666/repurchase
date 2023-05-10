@@ -2,12 +2,10 @@ package apis
 
 import (
 	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
 	"github.com/go-admin-team/go-admin-core/sdk/pkg/jwtauth/user"
 	_ "github.com/go-admin-team/go-admin-core/sdk/pkg/response"
-
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service"
 	"go-admin/app/admin/service/dto"
@@ -221,9 +219,59 @@ func (e Shop) ChangeStatus(c *gin.Context) {
 	}
 	err = s.ChangeStatus(&req)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("获取商店失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("商店状态变更失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 
 	e.OK(req.GetId(), "查询成功")
+}
+
+func (e Shop) ShopRank(c *gin.Context) {
+	req := dto.ShopRankReq{}
+	s := service.Shop{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+	shopRank := dto.ShopRankResp{}
+
+	err = s.ShopRank(&req, &shopRank)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("商店排行榜信息查询失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+
+	e.OK(shopRank, "查询成功")
+}
+
+func (e Shop) ShopAnalise(c *gin.Context) {
+
+	req := dto.ShopAnaliseReq{}
+	s := service.Shop{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	shopAnalise := dto.ShopAnaliseResp{}
+
+	err = s.ShopAnalise(&req, &shopAnalise)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("商店排行榜信息查询失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+
+	e.OK(shopAnalise, "查询成功")
 }

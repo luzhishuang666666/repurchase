@@ -25,5 +25,9 @@ func registerShopRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddlewar
 		r.DELETE("", api.Delete)
 
 		r.GET("/changeStatus/:id", api.ChangeStatus)
+
+		r.GET("/shopRank/:id", api.ShopRank)
+
+		r.GET("/shopAnalise/:id", api.ShopAnalise)
 	}
 }

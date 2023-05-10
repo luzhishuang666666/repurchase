@@ -113,6 +113,63 @@ type ShopChangeStatusReq struct {
 	Id int `uri:"id"`
 }
 
+type ShopRankReq struct {
+	Id int `uri:"id"`
+}
+
+type ShopAnaliseReq struct {
+	Id int `uri:"id"`
+}
+
 func (s *ShopChangeStatusReq) GetId() int {
 	return s.Id
+}
+
+func (s *ShopRankReq) GetId() int {
+	return s.Id
+}
+
+func (s *ShopAnaliseReq) GetId() int {
+	return s.Id
+}
+
+type ShopRankResp struct {
+	Day   []RankItem `json:"day"`   // 按天排名列表
+	Month []RankItem `json:"month"` // 按月排名列表
+	Year  []RankItem `json:"year"`  // 按年排名列表
+}
+
+type RankItem struct {
+	CommodityName  string `json:"commodity_name"`  // 商品名称
+	CommodityNo    string `json:"commodity_no"`    // 商品编号
+	CommodityScore int    `json:"commodity_score"` // 商品得分
+	CommodityTrend int    `json:"commodity_trend"` // 商品趋势（涨跌情况）
+}
+
+type ShopAnaliseResp struct {
+	TotalSales            string          `json:"totalSales"`
+	DayOnDayRate          string          `json:"dayOnDayRate"`
+	WeekOnWeekRate        string          `json:"weekOnWeekRate"`
+	DayTrend              int             `json:"dayTrend"`
+	WeekTrend             int             `json:"weekTrend"`
+	DailySales            string          `json:"dailySales"`
+	TotalViews            int             `json:"totalViews"`
+	DailyViews            int             `json:"dailyViews"`
+	TotalFavorites        int             `json:"totalFavorites"`
+	DailyFavorites        int             `json:"dailyFavorites"`
+	RepurchaseRate        int             `json:"repurchaseRate"`
+	SinglePurchaseCount   int             `json:"singlePurchaseCount"`
+	MultiplePurchaseCount int             `json:"multiplePurchaseCount"`
+	BarData               []PurchaseCount `json:"barData"`
+}
+
+type SaleCount struct {
+	TodayCount     int // 当天销量
+	YesterdayCount int // 上一天同一时间段销量
+	LastWeekCount  int // 上一周同一天同一时间段销量
+}
+
+type PurchaseCount struct {
+	X string `json:"x"`
+	Y int    `json:"y"`
 }
