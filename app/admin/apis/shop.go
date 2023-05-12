@@ -11,6 +11,7 @@ import (
 	"go-admin/app/admin/service/dto"
 	"go-admin/common/actions"
 	"go-admin/common/middleware"
+	"strconv"
 )
 
 type Shop struct {
@@ -47,6 +48,7 @@ func (e Shop) GetPage(c *gin.Context) {
 	p := actions.GetPermissionFromContext(c)
 	list := make([]models.Shop, 0)
 	var count int64
+	req.CreateBy = strconv.Itoa(user.GetUserId(c))
 
 	err = s.GetPage(&req, p, &list, &count)
 	if err != nil {

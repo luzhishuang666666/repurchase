@@ -15,25 +15,26 @@ import (
 	"go-admin/common/actions"
 )
 
-type Application struct {
+type ShopModel struct {
 	api.Api
 }
 
-// GetPage 获取申请列表
-// @Summary 获取申请列表
-// @Description 获取申请列表
-// @Tags 申请
-// @Param type query string false "申请类型"
-// @Param applicationContext query string false "申请内容"
-// @Param status query string false "状态"
+// GetPage 获取复购预测模型列表
+// @Summary 获取复购预测模型列表
+// @Description 获取复购预测模型列表
+// @Tags 复购预测模型
+// @Param shopId query string false "商店编码"
+// @Param templateId query string false "模板编码"
+// @Param modelName query string false "模型名称"
+// @Param modelRemark query string false "模型备注"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.Application}} "{"code": 200, "data": [...]}"
-// @Router /api/v1/application [get]
+// @Success 200 {object} response.Response{data=response.Page{list=[]models.ShopModel}} "{"code": 200, "data": [...]}"
+// @Router /api/v1/shop-model [get]
 // @Security Bearer
-func (e Application) GetPage(c *gin.Context) {
-	req := dto.ApplicationGetPageReq{}
-	s := service.Application{}
+func (e ShopModel) GetPage(c *gin.Context) {
+	req := dto.ShopModelGetPageReq{}
+	s := service.ShopModel{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -46,29 +47,29 @@ func (e Application) GetPage(c *gin.Context) {
 	}
 
 	p := actions.GetPermissionFromContext(c)
-	list := make([]models.Application, 0)
+	list := make([]models.ShopModel, 0)
 	var count int64
 	req.CreateBy = strconv.Itoa(user.GetUserId(c))
 	err = s.GetPage(&req, p, &list, &count)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("获取申请失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("获取复购预测模型失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 
 	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
 }
 
-// Get 获取申请
-// @Summary 获取申请
-// @Description 获取申请
-// @Tags 申请
+// Get 获取复购预测模型
+// @Summary 获取复购预测模型
+// @Description 获取复购预测模型
+// @Tags 复购预测模型
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.Application} "{"code": 200, "data": [...]}"
-// @Router /api/v1/application/{id} [get]
+// @Success 200 {object} response.Response{data=models.ShopModel} "{"code": 200, "data": [...]}"
+// @Router /api/v1/shop-model/{id} [get]
 // @Security Bearer
-func (e Application) Get(c *gin.Context) {
-	req := dto.ApplicationGetReq{}
-	s := service.Application{}
+func (e ShopModel) Get(c *gin.Context) {
+	req := dto.ShopModelGetReq{}
+	s := service.ShopModel{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -79,31 +80,31 @@ func (e Application) Get(c *gin.Context) {
 		e.Error(500, err, err.Error())
 		return
 	}
-	var object models.Application
+	var object models.ShopModel
 
 	p := actions.GetPermissionFromContext(c)
 	err = s.Get(&req, p, &object)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("获取申请失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("获取复购预测模型失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 
 	e.OK(object, "查询成功")
 }
 
-// Insert 创建申请
-// @Summary 创建申请
-// @Description 创建申请
-// @Tags 申请
+// Insert 创建复购预测模型
+// @Summary 创建复购预测模型
+// @Description 创建复购预测模型
+// @Tags 复购预测模型
 // @Accept application/json
 // @Product application/json
-// @Param data body dto.ApplicationInsertReq true "data"
+// @Param data body dto.ShopModelInsertReq true "data"
 // @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
-// @Router /api/v1/application [post]
+// @Router /api/v1/shop-model [post]
 // @Security Bearer
-func (e Application) Insert(c *gin.Context) {
-	req := dto.ApplicationInsertReq{}
-	s := service.Application{}
+func (e ShopModel) Insert(c *gin.Context) {
+	req := dto.ShopModelInsertReq{}
+	s := service.ShopModel{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -119,27 +120,27 @@ func (e Application) Insert(c *gin.Context) {
 
 	err = s.Insert(&req)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("创建申请失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("创建复购预测模型失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 
 	e.OK(req.GetId(), "创建成功")
 }
 
-// Update 修改申请
-// @Summary 修改申请
-// @Description 修改申请
-// @Tags 申请
+// Update 修改复购预测模型
+// @Summary 修改复购预测模型
+// @Description 修改复购预测模型
+// @Tags 复购预测模型
 // @Accept application/json
 // @Product application/json
 // @Param id path int true "id"
-// @Param data body dto.ApplicationUpdateReq true "body"
+// @Param data body dto.ShopModelUpdateReq true "body"
 // @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
-// @Router /api/v1/application/{id} [put]
+// @Router /api/v1/shop-model/{id} [put]
 // @Security Bearer
-func (e Application) Update(c *gin.Context) {
-	req := dto.ApplicationUpdateReq{}
-	s := service.Application{}
+func (e ShopModel) Update(c *gin.Context) {
+	req := dto.ShopModelUpdateReq{}
+	s := service.ShopModel{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -155,23 +156,23 @@ func (e Application) Update(c *gin.Context) {
 
 	err = s.Update(&req, p)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("修改申请失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("修改复购预测模型失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 	e.OK(req.GetId(), "修改成功")
 }
 
-// Delete 删除申请
-// @Summary 删除申请
-// @Description 删除申请
-// @Tags 申请
-// @Param data body dto.ApplicationDeleteReq true "body"
+// Delete 删除复购预测模型
+// @Summary 删除复购预测模型
+// @Description 删除复购预测模型
+// @Tags 复购预测模型
+// @Param data body dto.ShopModelDeleteReq true "body"
 // @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
-// @Router /api/v1/application [delete]
+// @Router /api/v1/shop-model [delete]
 // @Security Bearer
-func (e Application) Delete(c *gin.Context) {
-	s := service.Application{}
-	req := dto.ApplicationDeleteReq{}
+func (e ShopModel) Delete(c *gin.Context) {
+	s := service.ShopModel{}
+	req := dto.ShopModelDeleteReq{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -188,21 +189,15 @@ func (e Application) Delete(c *gin.Context) {
 
 	err = s.Remove(&req, p)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("删除申请失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("删除复购预测模型失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 	e.OK(req.GetId(), "删除成功")
 }
 
-// Approval 审批申请
-// @Summary 审批申请
-// @Description 审批申请
-// @Tags 申请
-// @Router /api/v1/application/approval [GET]
-// @Security Bearer
-func (e Application) Approval(c *gin.Context) {
-	req := dto.ApplicationApprovalReq{}
-	s := service.Application{}
+func (e ShopModel) Forecast(c *gin.Context) {
+	s := service.ShopModel{}
+	req := dto.ShopModelForecastReq{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -214,11 +209,12 @@ func (e Application) Approval(c *gin.Context) {
 		return
 	}
 
-	err = s.Approval(&req)
+	p := actions.GetPermissionFromContext(c)
+
+	err = s.Forecast(&req, p)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("创建申请失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("复购预测失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
-
-	e.OK(req.GetId(), "创建成功")
+	e.OK("复购预测成功", "复购预测成功")
 }

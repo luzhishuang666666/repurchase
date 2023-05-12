@@ -2,6 +2,7 @@ package apis
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
@@ -46,7 +47,7 @@ func (e Category) GetPage(c *gin.Context) {
 	p := actions.GetPermissionFromContext(c)
 	list := make([]models.Category, 0)
 	var count int64
-
+	req.CreateBy = strconv.Itoa(user.GetUserId(c))
 	err = s.GetPage(&req, p, &list, &count)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("获取品类失败，\r\n失败信息 %s", err.Error()))

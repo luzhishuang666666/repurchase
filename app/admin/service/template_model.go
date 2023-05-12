@@ -12,14 +12,14 @@ import (
 	cDto "go-admin/common/dto"
 )
 
-type Brand struct {
+type TemplateModel struct {
 	service.Service
 }
 
-// GetPage 获取Brand列表
-func (e *Brand) GetPage(c *dto.BrandGetPageReq, p *actions.DataPermission, list *[]models.Brand, count *int64) error {
+// GetPage 获取TemplateModel列表
+func (e *TemplateModel) GetPage(c *dto.TemplateModelGetPageReq, p *actions.DataPermission, list *[]models.TemplateModel, count *int64) error {
 	var err error
-	var data models.Brand
+	var data models.TemplateModel
 
 	err = e.Orm.Model(&data).
 		Scopes(
@@ -27,19 +27,18 @@ func (e *Brand) GetPage(c *dto.BrandGetPageReq, p *actions.DataPermission, list 
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
 			actions.Permission(data.TableName(), p),
 		).
-		Where("create_by = ?", c.CreateBy).
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
 	if err != nil {
-		e.Log.Errorf("BrandService GetPage error:%s \r\n", err)
+		e.Log.Errorf("TemplateModelService GetPage error:%s \r\n", err)
 		return err
 	}
 	return nil
 }
 
-// Get 获取Brand对象
-func (e *Brand) Get(d *dto.BrandGetReq, p *actions.DataPermission, model *models.Brand) error {
-	var data models.Brand
+// Get 获取TemplateModel对象
+func (e *TemplateModel) Get(d *dto.TemplateModelGetReq, p *actions.DataPermission, model *models.TemplateModel) error {
+	var data models.TemplateModel
 
 	err := e.Orm.Model(&data).
 		Scopes(
@@ -48,7 +47,7 @@ func (e *Brand) Get(d *dto.BrandGetReq, p *actions.DataPermission, model *models
 		First(model, d.GetId()).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		err = errors.New("查看对象不存在或无权查看")
-		e.Log.Errorf("Service GetBrand error:%s \r\n", err)
+		e.Log.Errorf("Service GetTemplateModel error:%s \r\n", err)
 		return err
 	}
 	if err != nil {
@@ -58,23 +57,23 @@ func (e *Brand) Get(d *dto.BrandGetReq, p *actions.DataPermission, model *models
 	return nil
 }
 
-// Insert 创建Brand对象
-func (e *Brand) Insert(c *dto.BrandInsertReq) error {
+// Insert 创建TemplateModel对象
+func (e *TemplateModel) Insert(c *dto.TemplateModelInsertReq) error {
 	var err error
-	var data models.Brand
+	var data models.TemplateModel
 	c.Generate(&data)
 	err = e.Orm.Create(&data).Error
 	if err != nil {
-		e.Log.Errorf("BrandService Insert error:%s \r\n", err)
+		e.Log.Errorf("TemplateModelService Insert error:%s \r\n", err)
 		return err
 	}
 	return nil
 }
 
-// Update 修改Brand对象
-func (e *Brand) Update(c *dto.BrandUpdateReq, p *actions.DataPermission) error {
+// Update 修改TemplateModel对象
+func (e *TemplateModel) Update(c *dto.TemplateModelUpdateReq, p *actions.DataPermission) error {
 	var err error
-	var data = models.Brand{}
+	var data = models.TemplateModel{}
 	e.Orm.Scopes(
 		actions.Permission(data.TableName(), p),
 	).First(&data, c.GetId())
@@ -82,7 +81,7 @@ func (e *Brand) Update(c *dto.BrandUpdateReq, p *actions.DataPermission) error {
 
 	db := e.Orm.Save(&data)
 	if err = db.Error; err != nil {
-		e.Log.Errorf("BrandService Save error:%s \r\n", err)
+		e.Log.Errorf("TemplateModelService Save error:%s \r\n", err)
 		return err
 	}
 	if db.RowsAffected == 0 {
@@ -91,16 +90,16 @@ func (e *Brand) Update(c *dto.BrandUpdateReq, p *actions.DataPermission) error {
 	return nil
 }
 
-// Remove 删除Brand
-func (e *Brand) Remove(d *dto.BrandDeleteReq, p *actions.DataPermission) error {
-	var data models.Brand
+// Remove 删除TemplateModel
+func (e *TemplateModel) Remove(d *dto.TemplateModelDeleteReq, p *actions.DataPermission) error {
+	var data models.TemplateModel
 
 	db := e.Orm.Model(&data).
 		Scopes(
 			actions.Permission(data.TableName(), p),
 		).Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
-		e.Log.Errorf("Service RemoveBrand error:%s \r\n", err)
+		e.Log.Errorf("Service RemoveTemplateModel error:%s \r\n", err)
 		return err
 	}
 	if db.RowsAffected == 0 {

@@ -27,6 +27,7 @@ func (e *UserRecord) GetPage(c *dto.UserRecordGetPageReq, p *actions.DataPermiss
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
 			actions.Permission(data.TableName(), p),
 		).
+		Where("create_by = ?", c.CreateBy).
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
 	if err != nil {
@@ -105,5 +106,29 @@ func (e *UserRecord) Remove(d *dto.UserRecordDeleteReq, p *actions.DataPermissio
 	if db.RowsAffected == 0 {
 		return errors.New("无权删除该数据")
 	}
+	return nil
+}
+
+func (e *UserRecord) AllRecord(createBy string, p *actions.DataPermission, records *[]models.UserRecord) error {
+
+	var data models.UserRecord
+
+	err := e.Orm.Model(&data).
+		Scopes(
+			actions.Permission(data.TableName(), p),
+		).
+		Where("create_by = ?", createBy).
+		Find(&records).Error
+
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+		err = errors.New("查看对象不存在或无权查看")
+		e.Log.Errorf("Service GetUserRecord error:%s \r\n", err)
+		return err
+	}
+	if err != nil {
+		e.Log.Errorf("db error:%s", err)
+		return err
+	}
+
 	return nil
 }

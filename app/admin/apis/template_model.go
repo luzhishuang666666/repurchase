@@ -2,7 +2,6 @@ package apis
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
@@ -15,25 +14,24 @@ import (
 	"go-admin/common/actions"
 )
 
-type Commodity struct {
+type TemplateModel struct {
 	api.Api
 }
 
-// GetPage 获取商品列表
-// @Summary 获取商品列表
-// @Description 获取商品列表
-// @Tags 商品
-// @Param commodityName query string false "商品名称"
-// @Param commodityBrandId query string false "商品品牌id"
-// @Param commodityCategoryId query string false "商品品类id"
+// GetPage 获取模型模板列表
+// @Summary 获取模型模板列表
+// @Description 获取模型模板列表
+// @Tags 模型模板
+// @Param templateName query string false "模板名称"
+// @Param templateType query string false "模板类型"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.Commodity}} "{"code": 200, "data": [...]}"
-// @Router /api/v1/commodity [get]
+// @Success 200 {object} response.Response{data=response.Page{list=[]models.TemplateModel}} "{"code": 200, "data": [...]}"
+// @Router /api/v1/template-model [get]
 // @Security Bearer
-func (e Commodity) GetPage(c *gin.Context) {
-	req := dto.CommodityGetPageReq{}
-	s := service.Commodity{}
+func (e TemplateModel) GetPage(c *gin.Context) {
+	req := dto.TemplateModelGetPageReq{}
+	s := service.TemplateModel{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -46,29 +44,29 @@ func (e Commodity) GetPage(c *gin.Context) {
 	}
 
 	p := actions.GetPermissionFromContext(c)
-	list := make([]models.Commodity, 0)
+	list := make([]models.TemplateModel, 0)
 	var count int64
-	req.CreateBy = strconv.Itoa(user.GetUserId(c))
+
 	err = s.GetPage(&req, p, &list, &count)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("获取商品失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("获取模型模板失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 
 	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
 }
 
-// Get 获取商品
-// @Summary 获取商品
-// @Description 获取商品
-// @Tags 商品
+// Get 获取模型模板
+// @Summary 获取模型模板
+// @Description 获取模型模板
+// @Tags 模型模板
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.Commodity} "{"code": 200, "data": [...]}"
-// @Router /api/v1/commodity/{id} [get]
+// @Success 200 {object} response.Response{data=models.TemplateModel} "{"code": 200, "data": [...]}"
+// @Router /api/v1/template-model/{id} [get]
 // @Security Bearer
-func (e Commodity) Get(c *gin.Context) {
-	req := dto.CommodityGetReq{}
-	s := service.Commodity{}
+func (e TemplateModel) Get(c *gin.Context) {
+	req := dto.TemplateModelGetReq{}
+	s := service.TemplateModel{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -79,31 +77,31 @@ func (e Commodity) Get(c *gin.Context) {
 		e.Error(500, err, err.Error())
 		return
 	}
-	var object models.Commodity
+	var object models.TemplateModel
 
 	p := actions.GetPermissionFromContext(c)
 	err = s.Get(&req, p, &object)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("获取商品失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("获取模型模板失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 
 	e.OK(object, "查询成功")
 }
 
-// Insert 创建商品
-// @Summary 创建商品
-// @Description 创建商品
-// @Tags 商品
+// Insert 创建模型模板
+// @Summary 创建模型模板
+// @Description 创建模型模板
+// @Tags 模型模板
 // @Accept application/json
 // @Product application/json
-// @Param data body dto.CommodityInsertReq true "data"
+// @Param data body dto.TemplateModelInsertReq true "data"
 // @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
-// @Router /api/v1/commodity [post]
+// @Router /api/v1/template-model [post]
 // @Security Bearer
-func (e Commodity) Insert(c *gin.Context) {
-	req := dto.CommodityInsertReq{}
-	s := service.Commodity{}
+func (e TemplateModel) Insert(c *gin.Context) {
+	req := dto.TemplateModelInsertReq{}
+	s := service.TemplateModel{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -115,34 +113,31 @@ func (e Commodity) Insert(c *gin.Context) {
 		return
 	}
 	// 设置创建人
-	if len(req.Avatar) == 0 {
-		req.Avatar = "/static/uploadfile/NoImage.jpg"
-	}
 	req.SetCreateBy(user.GetUserId(c))
 
 	err = s.Insert(&req)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("创建商品失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("创建模型模板失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 
 	e.OK(req.GetId(), "创建成功")
 }
 
-// Update 修改商品
-// @Summary 修改商品
-// @Description 修改商品
-// @Tags 商品
+// Update 修改模型模板
+// @Summary 修改模型模板
+// @Description 修改模型模板
+// @Tags 模型模板
 // @Accept application/json
 // @Product application/json
 // @Param id path int true "id"
-// @Param data body dto.CommodityUpdateReq true "body"
+// @Param data body dto.TemplateModelUpdateReq true "body"
 // @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
-// @Router /api/v1/commodity/{id} [put]
+// @Router /api/v1/template-model/{id} [put]
 // @Security Bearer
-func (e Commodity) Update(c *gin.Context) {
-	req := dto.CommodityUpdateReq{}
-	s := service.Commodity{}
+func (e TemplateModel) Update(c *gin.Context) {
+	req := dto.TemplateModelUpdateReq{}
+	s := service.TemplateModel{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -158,23 +153,23 @@ func (e Commodity) Update(c *gin.Context) {
 
 	err = s.Update(&req, p)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("修改商品失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("修改模型模板失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 	e.OK(req.GetId(), "修改成功")
 }
 
-// Delete 删除商品
-// @Summary 删除商品
-// @Description 删除商品
-// @Tags 商品
-// @Param data body dto.CommodityDeleteReq true "body"
+// Delete 删除模型模板
+// @Summary 删除模型模板
+// @Description 删除模型模板
+// @Tags 模型模板
+// @Param data body dto.TemplateModelDeleteReq true "body"
 // @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
-// @Router /api/v1/commodity [delete]
+// @Router /api/v1/template-model [delete]
 // @Security Bearer
-func (e Commodity) Delete(c *gin.Context) {
-	s := service.Commodity{}
-	req := dto.CommodityDeleteReq{}
+func (e TemplateModel) Delete(c *gin.Context) {
+	s := service.TemplateModel{}
+	req := dto.TemplateModelDeleteReq{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -191,7 +186,7 @@ func (e Commodity) Delete(c *gin.Context) {
 
 	err = s.Remove(&req, p)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("删除商品失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("删除模型模板失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 	e.OK(req.GetId(), "删除成功")

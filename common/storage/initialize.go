@@ -9,6 +9,8 @@ package storage
 
 import (
 	"github.com/go-admin-team/go-admin-core/storage"
+	"github.com/segmentio/kafka-go"
+	"go-admin/common/myKafka"
 	"log"
 
 	"github.com/go-admin-team/go-admin-core/sdk"
@@ -17,12 +19,14 @@ import (
 )
 
 var CacheAdapter storage.AdapterCache
+var KafkaConn *kafka.Conn
 var Err error
 
 // Setup 配置storage组件
 func Setup() {
-	//4. 设置缓存
+	KafkaConn = myKafka.CreateKafkaConnection()
 
+	//4. 设置缓存
 	CacheAdapter, Err = config.CacheConfig.Setup()
 	RedisErr := CacheAdapter.Set("Ping", "PongPong", 3600)
 	if RedisErr != nil {

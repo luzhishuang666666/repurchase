@@ -27,6 +27,7 @@ func (e *Category) GetPage(c *dto.CategoryGetPageReq, p *actions.DataPermission,
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
 			actions.Permission(data.TableName(), p),
 		).
+		Where("create_by = ?", c.CreateBy).
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
 	if err != nil {

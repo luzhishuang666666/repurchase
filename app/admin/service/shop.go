@@ -34,6 +34,7 @@ func (e *Shop) GetPage(c *dto.ShopGetPageReq, p *actions.DataPermission, list *[
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
 			actions.Permission(data.TableName(), p),
 		).
+		Where("create_by = ?", c.CreateBy).
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
 	if err != nil {
@@ -437,7 +438,7 @@ func (e *Shop) ShopAnalise(r *dto.ShopAnaliseReq, analise *dto.ShopAnaliseResp) 
 	// totalFavorites
 	var totalFavorites int64
 	e.Orm.Model(&UserRecordDatas).
-		Where("shop_id = ? AND (action_type = 1 OR action_type = 3)", id, today).
+		Where("shop_id = ? AND (action_type = 1 OR action_type = 3)", id).
 		Count(&totalFavorites)
 	analise.TotalFavorites = int(totalFavorites)
 

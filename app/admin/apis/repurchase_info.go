@@ -15,25 +15,26 @@ import (
 	"go-admin/common/actions"
 )
 
-type ShopCommodity struct {
+type RepurchaseInfo struct {
 	api.Api
 }
 
-// GetPage 获取商店商品汇总列表
-// @Summary 获取商店商品汇总列表
-// @Description 获取商店商品汇总列表
-// @Tags 商店商品汇总
-// @Param commodityId query string false "商品编号"
-// @Param shopId query string false "商店编号"
-// @Param status query string false "状态"
+// GetPage 获取预测记录列表
+// @Summary 获取预测记录列表
+// @Description 获取预测记录列表
+// @Tags 预测记录
+// @Param modelId query string false "模型编码"
+// @Param recordId query string false "用户记录编码"
+// @Param status query string false "预测记录状态"
+// @Param result query string false "预测结果"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.ShopCommodity}} "{"code": 200, "data": [...]}"
-// @Router /api/v1/shop-commodity [get]
+// @Success 200 {object} response.Response{data=response.Page{list=[]models.RepurchaseInfo}} "{"code": 200, "data": [...]}"
+// @Router /api/v1/repurchase-info [get]
 // @Security Bearer
-func (e ShopCommodity) GetPage(c *gin.Context) {
-	req := dto.ShopCommodityGetPageReq{}
-	s := service.ShopCommodity{}
+func (e RepurchaseInfo) GetPage(c *gin.Context) {
+	req := dto.RepurchaseInfoGetPageReq{}
+	s := service.RepurchaseInfo{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -46,30 +47,29 @@ func (e ShopCommodity) GetPage(c *gin.Context) {
 	}
 
 	p := actions.GetPermissionFromContext(c)
-	list := make([]models.ShopCommodity, 0)
+	list := make([]models.RepurchaseInfo, 0)
 	var count int64
 	req.CreateBy = strconv.Itoa(user.GetUserId(c))
-
 	err = s.GetPage(&req, p, &list, &count)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("获取商店商品汇总失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("获取预测记录失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 
 	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
 }
 
-// Get 获取商店商品汇总
-// @Summary 获取商店商品汇总
-// @Description 获取商店商品汇总
-// @Tags 商店商品汇总
+// Get 获取预测记录
+// @Summary 获取预测记录
+// @Description 获取预测记录
+// @Tags 预测记录
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.ShopCommodity} "{"code": 200, "data": [...]}"
-// @Router /api/v1/shop-commodity/{id} [get]
+// @Success 200 {object} response.Response{data=models.RepurchaseInfo} "{"code": 200, "data": [...]}"
+// @Router /api/v1/repurchase-info/{id} [get]
 // @Security Bearer
-func (e ShopCommodity) Get(c *gin.Context) {
-	req := dto.ShopCommodityGetReq{}
-	s := service.ShopCommodity{}
+func (e RepurchaseInfo) Get(c *gin.Context) {
+	req := dto.RepurchaseInfoGetReq{}
+	s := service.RepurchaseInfo{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -80,31 +80,31 @@ func (e ShopCommodity) Get(c *gin.Context) {
 		e.Error(500, err, err.Error())
 		return
 	}
-	var object models.ShopCommodity
+	var object models.RepurchaseInfo
 
 	p := actions.GetPermissionFromContext(c)
 	err = s.Get(&req, p, &object)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("获取商店商品汇总失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("获取预测记录失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 
 	e.OK(object, "查询成功")
 }
 
-// Insert 创建商店商品汇总
-// @Summary 创建商店商品汇总
-// @Description 创建商店商品汇总
-// @Tags 商店商品汇总
+// Insert 创建预测记录
+// @Summary 创建预测记录
+// @Description 创建预测记录
+// @Tags 预测记录
 // @Accept application/json
 // @Product application/json
-// @Param data body dto.ShopCommodityInsertReq true "data"
+// @Param data body dto.RepurchaseInfoInsertReq true "data"
 // @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
-// @Router /api/v1/shop-commodity [post]
+// @Router /api/v1/repurchase-info [post]
 // @Security Bearer
-func (e ShopCommodity) Insert(c *gin.Context) {
-	req := dto.ShopCommodityInsertReq{}
-	s := service.ShopCommodity{}
+func (e RepurchaseInfo) Insert(c *gin.Context) {
+	req := dto.RepurchaseInfoInsertReq{}
+	s := service.RepurchaseInfo{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -120,27 +120,27 @@ func (e ShopCommodity) Insert(c *gin.Context) {
 
 	err = s.Insert(&req)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("创建商店商品汇总失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("创建预测记录失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 
 	e.OK(req.GetId(), "创建成功")
 }
 
-// Update 修改商店商品汇总
-// @Summary 修改商店商品汇总
-// @Description 修改商店商品汇总
-// @Tags 商店商品汇总
+// Update 修改预测记录
+// @Summary 修改预测记录
+// @Description 修改预测记录
+// @Tags 预测记录
 // @Accept application/json
 // @Product application/json
 // @Param id path int true "id"
-// @Param data body dto.ShopCommodityUpdateReq true "body"
+// @Param data body dto.RepurchaseInfoUpdateReq true "body"
 // @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
-// @Router /api/v1/shop-commodity/{id} [put]
+// @Router /api/v1/repurchase-info/{id} [put]
 // @Security Bearer
-func (e ShopCommodity) Update(c *gin.Context) {
-	req := dto.ShopCommodityUpdateReq{}
-	s := service.ShopCommodity{}
+func (e RepurchaseInfo) Update(c *gin.Context) {
+	req := dto.RepurchaseInfoUpdateReq{}
+	s := service.RepurchaseInfo{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -156,23 +156,23 @@ func (e ShopCommodity) Update(c *gin.Context) {
 
 	err = s.Update(&req, p)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("修改商店商品汇总失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("修改预测记录失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 	e.OK(req.GetId(), "修改成功")
 }
 
-// Delete 删除商店商品汇总
-// @Summary 删除商店商品汇总
-// @Description 删除商店商品汇总
-// @Tags 商店商品汇总
-// @Param data body dto.ShopCommodityDeleteReq true "body"
+// Delete 删除预测记录
+// @Summary 删除预测记录
+// @Description 删除预测记录
+// @Tags 预测记录
+// @Param data body dto.RepurchaseInfoDeleteReq true "body"
 // @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
-// @Router /api/v1/shop-commodity [delete]
+// @Router /api/v1/repurchase-info [delete]
 // @Security Bearer
-func (e ShopCommodity) Delete(c *gin.Context) {
-	s := service.ShopCommodity{}
-	req := dto.ShopCommodityDeleteReq{}
+func (e RepurchaseInfo) Delete(c *gin.Context) {
+	s := service.RepurchaseInfo{}
+	req := dto.RepurchaseInfoDeleteReq{}
 	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
@@ -189,7 +189,7 @@ func (e ShopCommodity) Delete(c *gin.Context) {
 
 	err = s.Remove(&req, p)
 	if err != nil {
-		e.Error(500, err, fmt.Sprintf("删除商店商品汇总失败，\r\n失败信息 %s", err.Error()))
+		e.Error(500, err, fmt.Sprintf("删除预测记录失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
 	e.OK(req.GetId(), "删除成功")

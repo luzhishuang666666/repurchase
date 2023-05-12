@@ -2,6 +2,7 @@ package router
 
 import (
 	"go-admin/app/admin/apis"
+	"go-admin/common/storage"
 	"mime"
 
 	"github.com/go-admin-team/go-admin-core/sdk/config"
@@ -15,6 +16,7 @@ import (
 
 	"go-admin/common/middleware"
 	"go-admin/common/middleware/handler"
+	"go-admin/common/myKafka"
 	_ "go-admin/docs/admin"
 )
 
@@ -42,6 +44,8 @@ func sysBaseRouter(r *gin.RouterGroup) {
 		r.GET("/", apis.GoAdmin)
 	}
 	r.GET("/info", handler.Ping)
+	r.GET("/messageQue", handler.MessageQue)
+	r.POST("/consume", consumeHandler)
 }
 
 func sysStaticFileRouter(r *gin.RouterGroup) {
@@ -85,4 +89,13 @@ func registerBaseRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddlewar
 		v1auth.GET("/roleDeptTreeselect/:roleId", api2.GetDeptTreeRoleSelect)
 		v1auth.POST("/logout", handler.LogOut)
 	}
+}
+
+func consumeHandler(c *gin.Context) {
+	// 在这里编写消费消息队列的逻辑
+	go myKafka.ConsumeMessages("my-topic", 0, storage.KafkaConn)
+
+	c.JSON(200, gin.H{
+		"message": "开始消费消息队列",
+	})
 }

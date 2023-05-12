@@ -2,6 +2,7 @@ package apis
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
@@ -51,6 +52,7 @@ func (e UserRecord) GetPage(c *gin.Context) {
 	list := make([]models.UserRecord, 0)
 	var count int64
 
+	req.CreateBy = strconv.Itoa(user.GetUserId(c))
 	err = s.GetPage(&req, p, &list, &count)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("获取用户记录失败，\r\n失败信息 %s", err.Error()))
@@ -194,4 +196,30 @@ func (e UserRecord) Delete(c *gin.Context) {
 		return
 	}
 	e.OK(req.GetId(), "删除成功")
+}
+
+func (e UserRecord) AllRecord(c *gin.Context) {
+
+	s := service.UserRecord{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	// req.SetUpdateBy(user.GetUserId(c))
+	p := actions.GetPermissionFromContext(c)
+
+	var records []models.UserRecord
+	err = s.AllRecord(strconv.Itoa(user.GetUserId(c)), p, &records)
+
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("获取用户记录失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+	e.OK(records, "删除成功")
 }
